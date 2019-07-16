@@ -10,9 +10,10 @@ What things you need to install the software and how to install them
 
 ## Built With
 
-* [NodeJS](http://www.dropwizard.io/1.0.2/docs/) - Javascript server-side interpreter.
-* [ExpressJS](https://expressjs.com/) - Web framework.
-* [RabbitMQ](https://www.rabbitmq.com/) - Message Broker. 
+* [NodeJS](http://www.dropwizard.io/1.0.2/docs/)
+* [ExpressJS](https://expressjs.com/)
+* [RabbitMQ](https://www.rabbitmq.com/)
+* [Python3](https://www.python.org/download/releases/3.0/)
 
 ## Versioning
 
