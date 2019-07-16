@@ -1,6 +1,6 @@
 # CQRS &amp; Event Sourcing Inpired Shopping Cart API
 
-This will act as the Query side of CQRS using NodeJS as the API Service and a Python script for generating projectors from Domain Events.
+This will be the Shopping Cart REST API that will place orders to the Order Fulfillment API (https://github.com/ericksonreyes/cqrs-order-fulfillment-api). 
 
 ### Prerequisites
 
