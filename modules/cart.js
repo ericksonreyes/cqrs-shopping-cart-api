@@ -61,3 +61,12 @@ module.exports.findOne = (id) => {
     let storedItem = fs.readFileSync(itemPathAndName).toString();
     return JSON.parse(storedItem);
 }
+
+module.exports.remove = (id) => {
+    const itemPathAndName = cartDirectory + '/' + id;
+    if (fs.existsSync(itemPathAndName)) {
+        fs.unlink(itemPathAndName, err => {
+            if (err) throw err;
+        });
+    }
+}

@@ -188,7 +188,6 @@ app.delete('/v1/api/cart/items', (req, res) => {
     res.end();
 })
 
-
 app.put('/v1/api/cart/items/:id/quantity', (req, res) => {
     const newQuantity = req.body.newQuantity;
     const cartItem = cart.findOne(req.params.id);
@@ -226,6 +225,26 @@ app.put('/v1/api/cart/items/:id/quantity', (req, res) => {
         cart.store([cartItem]);
     }
 
+    res.status(204);
+    res.end();
+})
+
+app.delete('/v1/api/cart/items/:id', (req, res) => {
+    const cartItem = cart.findOne(req.params.id);
+    if (cartItem === null) {
+        res.status(404).json(
+            {
+                "error": [
+                    {
+                        "code": "CartItemNotFound",
+                        "message": "Cart item not found.",
+                        "description": "The cart item you are looking for does not exist."
+                    }
+                ]
+            }
+        );
+    }
+    cart.remove(req.params.id);
     res.status(204);
     res.end();
 })
