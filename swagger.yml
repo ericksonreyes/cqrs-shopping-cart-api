@@ -9,7 +9,6 @@ host: "localhost:3000"
 basePath: "/v1/api/"
 schemes:
   - "http"
-  - "https"
 consumes:
   - application/json
 produces:
@@ -28,7 +27,7 @@ paths:
       tags:
         - Customer
       summary: Customer authentication.
-      description: API for authenticating customer.
+      description: API for authenticating customer. Default username is "customer" and password is "password".
       operationId: authenticateCustomer
       parameters:
         - name: body
@@ -51,10 +50,6 @@ paths:
             type: object
             properties:
               accessToken:
-                type: string
-              refreshToken:
-                type: string
-              bearer:
                 type: string
         403:
           $ref: '#/responses/AccessDenied'

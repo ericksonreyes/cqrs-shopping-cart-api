@@ -1,0 +1,29 @@
+{
+  "name": "cqrs-shopping-cart-api",
+  "version": "1.0.0",
+  "description": "This will be the Shopping Cart REST API that will place orders to the [Order Fulfillment API](https://github.com/ericksonreyes/cqrs-order-fulfillment-api).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ericksonreyes/cqrs-shopping-cart-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ericksonreyes/cqrs-shopping-cart-api/issues"
+  },
+  "homepage": "https://github.com/ericksonreyes/cqrs-shopping-cart-api#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-jwt": "^5.3.1",
+    "jsonwebtoken": "^8.5.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  }
+}
