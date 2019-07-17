@@ -1,40 +1,18 @@
 const express = require('express')
+const jwt = require('./modules/jwt')
 const cors = require('cors')
-const jwt = require('express-jwt')
-const fs = require('fs');
 const pathToRegexp = require('path-to-regexp')
-const cartDirectory = require('temp-dir') + '/cart';
+const products = require('./modules/products');
+const cart = require('./modules/cart');
 
 const app = express()
 const port = 3000
 const appSecret = 'secret-word'
-const products = [
-    {
-        "id": "product-1",
-        "name": "Air Jordan 11",
-        "price": 1132
-    },
-    {
-        "id": "product-2",
-        "name": "Air Qatar 11",
-        "price": 879
-    },
-    {
-        "id": "product-i1",
-        "name": "Air Saudi Arabia 2",
-        "price": 150
-    },
-    {
-        "id": "product-i1",
-        "name": "Air Kuwait 12",
-        "price": 212
-    }
-]
 
 app.use(cors())
 app.use(express.json())
 app.use(
-    jwt({secret: appSecret})
+    jwt.parse({secret: appSecret})
         .unless(
             {
                 path: [
@@ -47,6 +25,14 @@ app.use(
 );
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
+
+/**
+ * Prepare the modules to be used
+ */
+products.prepare();
+cart.prepare();
+
+
 /**
  * PUBLIC FACING ROUTES
  */
@@ -56,13 +42,7 @@ app.get('/v1/api', (req, res) => {
 
 app.post('/v1/api/auth', (req, res) => {
     if (req.body.username === 'customer' && req.body.password === 'password') {
-        const jwt = require('jsonwebtoken');
-        const token = jwt.sign({
-            exp: (Math.floor(Date.now() / 1000) + (60 * 60)) * 24, /** Expires in 24 hours **/
-            data: {
-                id: 'customer-1'
-            }
-        }, appSecret);
+        const token = jwt.generate('customer-id', appSecret);
         res.json({'accessToken': token})
         return
     }
@@ -81,29 +61,25 @@ app.post('/v1/api/auth', (req, res) => {
 })
 
 app.get('/v1/api/products', (req, res) => {
-    res.json(products);
+    res.json(products.findAll());
 })
 
-
 app.get('/v1/api/products/:id', (req, res) => {
-    for (let productIndex = 0; productIndex < products.length; productIndex++) {
-        if (products[productIndex].id === req.params.id) {
-            res.json(products[productIndex])
-            return
-        }
+    if (products.findOne(req.params.id) === null) {
+        res.status(404).json(
+            {
+                "error": [
+                    {
+                        "code": "ProductNotFound",
+                        "message": "Product not found.",
+                        "description": "The product with id " + req.params.id + " does not exist."
+                    }
+                ]
+            }
+        );
     }
 
-    res.status(404).json(
-        {
-            "error": [
-                {
-                    "code": "ProductNotFound",
-                    "message": "Product Not Found.",
-                    "description": "The product you are looking for does not exist in our listing."
-                }
-            ]
-        }
-    );
+    res.json(products.findOne(req.params.id));
 })
 
 
@@ -111,35 +87,103 @@ app.get('/v1/api/products/:id', (req, res) => {
  * SECURED ROUTES
  */
 
-if (!fs.existsSync(cartDirectory)){
-    fs.mkdir(cartDirectory);
-}
-
 app.get('/v1/api/cart/items', (req, res) => {
-    let items = [];
-    let files = fs.readdirSync(cartDirectory);
-
-    for(let fileIndex=0; fileIndex<files.length; fileIndex++) {
-        let file = cartDirectory + '/' + files[fileIndex];
-        let storedItem = fs.readFileSync(file).toString();
-        let jsonItem = JSON.parse(storedItem);
-        items.push(jsonItem)
-    }
+    let items = cart.findAll();
     res.json(items);
 })
 
+app.post('/v1/api/cart/items', (req, res) => {
+    const newItems = req.body;
+    const numberOfNewItems = newItems.length;
+
+    if (numberOfNewItems > 0) {
+        const uuid = require('uuid/v1');
+        let newItemsToBeStored = [];
+
+        for (let itemIndex = 0; itemIndex < numberOfNewItems; itemIndex++) {
+            let newItem = newItems[itemIndex];
+
+            if (newItem.hasOwnProperty('productId') && newItem.hasOwnProperty('quantity')) {
+                let product = products.findOne(newItem.productId);
+
+                if (newItem.quantity < 1) {
+                    res.status(422).json(
+                        {
+                            "error": [
+                                {
+                                    "code": "InvalidPurchaseQuantity",
+                                    "message": "Invalid purchase quantity.",
+                                    "description": "You must purchase at least one product with id " + newItem.productId
+                                }
+                            ]
+                        }
+                    );
+                    return;
+                }
+
+                if (product === null) {
+                    res.status(422).json(
+                        {
+                            "error": [
+                                {
+                                    "code": "ProductNotFound",
+                                    "message": "Product not found.",
+                                    "description": "The product with id " + newItem.productId + " does not exist."
+                                }
+                            ]
+                        }
+                    );
+                    return;
+                }
+
+                if (product.stock < newItem.quantity) {
+                    res.status(422).json(
+                        {
+                            "error": [
+                                {
+                                    "code": "ProductOutOfStock",
+                                    "message": "Product out of stock.",
+                                    "description": "We no longer have enough stock of product with id " + newItem.productId
+                                }
+                            ]
+                        }
+                    );
+                    return;
+                }
+
+                let newItemToBeStored = {
+                    id: uuid(),
+                    productId: product.id,
+                    price: product.price,
+                    status: 'Order placed.',
+                    quantity: newItem.quantity
+                }
+                newItemsToBeStored.push(newItemToBeStored);
+            }
+        }
+
+
+        if (newItemsToBeStored.length > 0) {
+            cart.store(newItemsToBeStored);
+            res.status(201).json(newItemsToBeStored);
+        }
+    }
+
+    res.status(400).json(
+        {
+            "error": [
+                {
+                    "code": "BadRequest",
+                    "message": "Malformed request body.",
+                    "description": "Your request body must be an array of product id and quantity."
+                }
+            ]
+        }
+    );
+})
 
 app.delete('/v1/api/cart/items', (req, res) => {
-    let files = fs.readdirSync(cartDirectory);
-
-    for(let fileIndex=0; fileIndex<files.length; fileIndex++) {
-        let file = cartDirectory + '/' + files[fileIndex];
-        fs.unlink(file, err => {
-            if (err) throw err;
-        });
-    }
+    cart.empty();
     res.status(204);
     res.end();
 })
-
-

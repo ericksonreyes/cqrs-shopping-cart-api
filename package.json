@@ -24,7 +24,8 @@
     "fs": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "path-to-regexp": "^3.0.0",
-    "temp-dir": "^2.0.0"
+    "temp-dir": "^2.0.0",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "nodemon": "^1.19.1"

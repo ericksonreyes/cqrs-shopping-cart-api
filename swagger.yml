@@ -9,7 +9,6 @@ host: "localhost:3000"
 basePath: "/v1/api/"
 schemes:
 - "http"
-- "https"
 consumes:
 - application/json
 produces:
@@ -80,6 +79,8 @@ paths:
                 type: string
               productId:
                 type: string
+              price:
+                type: integer
               quantity:
                 type: integer
         400:
