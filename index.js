@@ -106,21 +106,6 @@ app.post('/v1/api/cart/items', (req, res) => {
             if (newItem.hasOwnProperty('productId') && newItem.hasOwnProperty('quantity')) {
                 let product = products.findOne(newItem.productId);
 
-                if (newItem.quantity < 1) {
-                    res.status(422).json(
-                        {
-                            "error": [
-                                {
-                                    "code": "InvalidPurchaseQuantity",
-                                    "message": "Invalid purchase quantity.",
-                                    "description": "You must purchase at least one product with id " + newItem.productId
-                                }
-                            ]
-                        }
-                    );
-                    return;
-                }
-
                 if (product === null) {
                     res.status(422).json(
                         {
@@ -151,11 +136,26 @@ app.post('/v1/api/cart/items', (req, res) => {
                     return;
                 }
 
+                if (newItem.quantity < 1) {
+                    res.status(422).json(
+                        {
+                            "error": [
+                                {
+                                    "code": "InvalidPurchaseQuantity",
+                                    "message": "Invalid purchase quantity.",
+                                    "description": "You must purchase at least one product with id " + newItem.productId
+                                }
+                            ]
+                        }
+                    );
+                    return;
+                }
+
                 let newItemToBeStored = {
                     id: uuid(),
                     productId: product.id,
                     price: product.price,
-                    status: 'Order placed.',
+                    status: 'Added to cart.',
                     quantity: newItem.quantity
                 }
                 newItemsToBeStored.push(newItemToBeStored);
@@ -184,6 +184,48 @@ app.post('/v1/api/cart/items', (req, res) => {
 
 app.delete('/v1/api/cart/items', (req, res) => {
     cart.empty();
+    res.status(204);
+    res.end();
+})
+
+
+app.put('/v1/api/cart/items/:id/quantity', (req, res) => {
+    const newQuantity = req.body.newQuantity;
+    const cartItem = cart.findOne(req.params.id);
+    if (cartItem === null) {
+        res.status(404).json(
+            {
+                "error": [
+                    {
+                        "code": "CartItemNotFound",
+                        "message": "Cart item not found.",
+                        "description": "The cart item you are looking for does not exist."
+                    }
+                ]
+            }
+        );
+    }
+
+    if (newQuantity < 1) {
+        res.status(422).json(
+            {
+                "error": [
+                    {
+                        "code": "InvalidPurchaseQuantity",
+                        "message": "Invalid purchase quantity.",
+                        "description": "You must purchase at least one product with id " + cartItem.productId
+                    }
+                ]
+            }
+        );
+        return;
+    }
+
+    if (newQuantity !== cartItem.quantity) {
+        cartItem.quantity = newQuantity;
+        cart.store([cartItem]);
+    }
+
     res.status(204);
     res.end();
 })
