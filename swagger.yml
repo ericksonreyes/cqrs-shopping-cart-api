@@ -8,41 +8,42 @@ info:
 host: "localhost:3000"
 basePath: "/v1/api/"
 schemes:
-  - "http"
+- "http"
+- "https"
 consumes:
-  - application/json
+- application/json
 produces:
-  - application/json
+- application/json
 tags:
-  - name: Customer
-    description: The Customer.
-  - name: Product
-    description: The Product we are selling.
-  - name: Cart
-    description: The Shopping Cart.
+- name: Customer
+  description: The Customer.
+- name: Product
+  description: The Product we are selling.
+- name: Cart
+  description: The Shopping Cart.
 paths:
 
   /auth:
     post:
       tags:
-        - Customer
+      - Customer
       summary: Customer authentication.
-      description: API for authenticating customer. Default username is "customer" and password is "password".
+      description: API for authenticating customer.
       operationId: authenticateCustomer
       parameters:
-        - name: body
-          description: Customer login credentials
-          in: body
-          schema:
-            type: object
-            properties:
-              username:
-                type: string
-              password:
-                type: string
-            required:
-              - username
-              - password
+      - name: body
+        description: Customer login credentials
+        in: body
+        schema:
+          type: object
+          properties:
+            username:
+              type: string
+            password:
+              type: string
+          required:
+          - username
+          - password
       responses:
         200:
           description: Customer authenticated.
@@ -63,12 +64,12 @@ paths:
   /cart/items:
     get:
       tags:
-        - Cart
+      - Cart
       summary: Get all carts items.
       description: API for getting all items in the customer shopping cart.
       operationId: getAllCartItems
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       responses:
         200:
           description: A collection of cart items.
@@ -99,28 +100,28 @@ paths:
           $ref: '#/responses/ServerUnavailable'
     post:
       tags:
-        - Cart
+      - Cart
       summary: Adds items in a cart.
       description: API for adding items in a cart.
       operationId: addCartItem
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       parameters:
-        - name: body
-          description: An array of items to be added to the cart.
-          in: body
-          schema:
-            type: array
-            items:
-              type: object
-              required:
-                - productId
-                - quantity
-              properties:
-                productId:
-                  type: string
-                quantity:
-                  type: integer
+      - name: body
+        description: An array of items to be added to the cart.
+        in: body
+        schema:
+          type: array
+          items:
+            type: object
+            required:
+            - productId
+            - quantity
+            properties:
+              productId:
+                type: string
+              quantity:
+                type: integer
       responses:
         201:
           description: A collection of newly added items to the cart.
@@ -155,12 +156,12 @@ paths:
           $ref: '#/responses/ServerUnavailable'
     delete:
       tags:
-        - Cart
+      - Cart
       summary: Empties the cart
       description: API for emptying the cart.
       operationId: emptyCart
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       responses:
         204:
           $ref: '#/responses/ResourceDeleted'
@@ -188,28 +189,28 @@ paths:
   /cart/items/{id}/quantity:
     put:
       tags:
-        - Cart
+      - Cart
       summary: Updates a cart item quantity.
       description: API for updating the quantity of a cart item.
       operationId: updateCartItemQuantity
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       parameters:
-        - name: id
-          description: A cart item identifier.
-          in: path
-          required: true
-          type: string
-        - name: quantity
-          description: The new cart item quantity.
-          in: body
-          schema:
-            type: object
-            properties:
-              quantity:
-                type: integer
-            required:
-              - quantity
+      - name: id
+        description: A cart item identifier.
+        in: path
+        required: true
+        type: string
+      - name: quantity
+        description: The new cart item quantity.
+        in: body
+        schema:
+          type: object
+          properties:
+            quantity:
+              type: integer
+          required:
+          - quantity
       responses:
         204:
           $ref: '#/responses/ResourceUpdated'
@@ -239,18 +240,18 @@ paths:
   /cart/items/{id}:
     delete:
       tags:
-        - Cart
+      - Cart
       summary: Removes an item from the cart.
       description: API for removing an item from the cart.
       operationId: removeOneProduct
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       parameters:
-        - name: id
-          description: A cart item unique identifier.
-          in: path
-          required: true
-          type: string
+      - name: id
+        description: A cart item unique identifier.
+        in: path
+        required: true
+        type: string
       responses:
         204:
           $ref: '#/responses/ResourceDeleted'
@@ -275,21 +276,52 @@ paths:
         503:
           $ref: '#/responses/ServerUnavailable'
 
+  /products:
+    get:
+      tags:
+      - Product
+      summary: Get all our products.
+      description: API for getting all products.
+      operationId: getAllProducts
+      responses:
+        200:
+          description: ""
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Product'
+        304:
+          $ref: '#/responses/NotModified'
+        400:
+          $ref: '#/responses/BadRequest'
+        401:
+          $ref: '#/responses/ExpiredSession'
+        403:
+          $ref: '#/responses/AccessDenied'
+        404:
+          $ref: '#/responses/ResourceNotFound'
+        422:
+          $ref: '#/responses/UnprocessableEntity'
+        429:
+          $ref: '#/responses/TooManyRequests'
+        500:
+          $ref: '#/responses/ServerError'
+        503:
+          $ref: '#/responses/ServerUnavailable'
+
   /products/{id}:
     get:
       tags:
-        - Product
+      - Product
       summary: Get one product.
       description: API for getting one product.
       operationId: getOneProduct
-      security:
-        - bearerAuth: []
       parameters:
-        - name: id
-          description: A product unique identifier.
-          in: path
-          required: true
-          type: string
+      - name: id
+        description: A product unique identifier.
+        in: path
+        required: true
+        type: string
       responses:
         200:
           description: ""
