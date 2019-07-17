@@ -1,7 +1,9 @@
 const express = require('express')
 const cors = require('cors')
 const jwt = require('express-jwt')
+const fs = require('fs');
 const pathToRegexp = require('path-to-regexp')
+const cartDirectory = require('temp-dir') + '/cart';
 
 const app = express()
 const port = 3000
@@ -46,7 +48,7 @@ app.use(
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 /**
- * ROUTES
+ * PUBLIC FACING ROUTES
  */
 app.get('/v1/api', (req, res) => {
     res.json({'response': 'Hello World!'})
@@ -56,7 +58,7 @@ app.post('/v1/api/auth', (req, res) => {
     if (req.body.username === 'customer' && req.body.password === 'password') {
         const jwt = require('jsonwebtoken');
         const token = jwt.sign({
-            exp: Math.floor(Date.now() / 1000) + (60 * 60),
+            exp: (Math.floor(Date.now() / 1000) + (60 * 60)) * 24, /** Expires in 24 hours **/
             data: {
                 id: 'customer-1'
             }
@@ -84,7 +86,6 @@ app.get('/v1/api/products', (req, res) => {
 
 
 app.get('/v1/api/products/:id', (req, res) => {
-
     for (let productIndex = 0; productIndex < products.length; productIndex++) {
         if (products[productIndex].id === req.params.id) {
             res.json(products[productIndex])
@@ -103,4 +104,26 @@ app.get('/v1/api/products/:id', (req, res) => {
             ]
         }
     );
+})
+
+
+/**
+ * SECURED ROUTES
+ */
+
+if (!fs.existsSync(cartDirectory)){
+    fs.mkdir(cartDirectory);
+}
+
+app.get('/v1/api/cart/items', (req, res) => {
+    let items = [];
+    let files = fs.readdirSync(cartDirectory);
+
+    for(let fileIndex=0; fileIndex<files.length; fileIndex++) {
+        let file = cartDirectory + '/' + files[fileIndex];
+        let storedItem = fs.readFileSync(file).toString();
+        let jsonItem = JSON.parse(storedItem);
+        items.push(jsonItem)
+    }
+    res.json(items);
 })

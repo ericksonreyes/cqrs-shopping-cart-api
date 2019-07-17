@@ -28,7 +28,7 @@ paths:
       tags:
       - Customer
       summary: Customer authentication.
-      description: API for authenticating customer.
+      description: API for authenticating customers. Default username is "customer" and password is "password"
       operationId: authenticateCustomer
       parameters:
       - name: body
