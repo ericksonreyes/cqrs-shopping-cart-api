@@ -127,3 +127,19 @@ app.get('/v1/api/cart/items', (req, res) => {
     }
     res.json(items);
 })
+
+
+app.delete('/v1/api/cart/items', (req, res) => {
+    let files = fs.readdirSync(cartDirectory);
+
+    for(let fileIndex=0; fileIndex<files.length; fileIndex++) {
+        let file = cartDirectory + '/' + files[fileIndex];
+        fs.unlink(file, err => {
+            if (err) throw err;
+        });
+    }
+    res.status(204);
+    res.end();
+})
+
+
