@@ -1,11 +1,11 @@
 const express = require('express')
 const cors = require('cors')
-const jwtReader = require('express-jwt')
+const jwt = require('express-jwt')
+const pathToRegexp = require('path-to-regexp')
 
 const app = express()
 const port = 3000
 const appSecret = 'secret-word'
-
 const products = [
     {
         "id": "product-1",
@@ -32,13 +32,13 @@ const products = [
 app.use(cors())
 app.use(express.json())
 app.use(
-    jwtReader({secret: appSecret})
+    jwt({secret: appSecret})
         .unless(
             {
                 path: [
-                    '/v1/api/auth',
-                    '/v1/api/products',
-                    '/v1/api/products/:id',
+                    pathToRegexp('/v1/api/auth'),
+                    pathToRegexp('/v1/api/products'),
+                    pathToRegexp('/v1/api/products/:id')
                 ]
             }
         )
@@ -80,4 +80,27 @@ app.post('/v1/api/auth', (req, res) => {
 
 app.get('/v1/api/products', (req, res) => {
     res.json(products);
+})
+
+
+app.get('/v1/api/products/:id', (req, res) => {
+
+    for (let productIndex = 0; productIndex < products.length; productIndex++) {
+        if (products[productIndex].id === req.params.id) {
+            res.json(products[productIndex])
+            return
+        }
+    }
+
+    res.status(404).json(
+        {
+            "error": [
+                {
+                    "code": "ProductNotFound",
+                    "message": "Product Not Found.",
+                    "description": "The product you are looking for does not exist in our listing."
+                }
+            ]
+        }
+    );
 })
