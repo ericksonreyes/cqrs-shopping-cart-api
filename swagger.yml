@@ -1,0 +1,449 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "CQRS & Event Sourcing Inspired Shopping Cart API"
+  description: "CQRS & Event Sourcing Inspired Shopping Cart API"
+  contact:
+    email: "support@acme.com"
+host: "localhost:3000"
+basePath: "/v1/api/"
+schemes:
+  - "http"
+  - "https"
+consumes:
+  - application/json
+produces:
+  - application/json
+tags:
+  - name: Customer
+    description: The Customer.
+  - name: Product
+    description: The Product we are selling.
+  - name: Cart
+    description: The Shopping Cart.
+paths:
+
+  /auth:
+    post:
+      tags:
+        - Customer
+      summary: Customer authentication.
+      description: API for authenticating customer.
+      operationId: authenticateCustomer
+      parameters:
+        - name: body
+          description: Customer login credentials
+          in: body
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              password:
+                type: string
+            required:
+              - username
+              - password
+      responses:
+        200:
+          description: Customer authenticated.
+          schema:
+            type: object
+            properties:
+              accessToken:
+                type: string
+              refreshToken:
+                type: string
+              bearer:
+                type: string
+        403:
+          $ref: '#/responses/AccessDenied'
+        404:
+          $ref: '#/responses/ResourceNotFound'
+        500:
+          $ref: '#/responses/ServerError'
+        503:
+          $ref: '#/responses/ServerUnavailable'
+
+  /cart/items:
+    get:
+      tags:
+        - Cart
+      summary: Get all carts items.
+      description: API for getting all items in the customer shopping cart.
+      operationId: getAllCartItems
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: A collection of cart items.
+          schema:
+            type: object
+            properties:
+              itemId:
+                type: string
+              productId:
+                type: string
+              quantity:
+                type: integer
+        400:
+          $ref: '#/responses/BadRequest'
+        401:
+          $ref: '#/responses/ExpiredSession'
+        403:
+          $ref: '#/responses/AccessDenied'
+        404:
+          $ref: '#/responses/ResourceNotFound'
+        422:
+          $ref: '#/responses/UnprocessableEntity'
+        429:
+          $ref: '#/responses/TooManyRequests'
+        500:
+          $ref: '#/responses/ServerError'
+        503:
+          $ref: '#/responses/ServerUnavailable'
+    post:
+      tags:
+        - Cart
+      summary: Adds items in a cart.
+      description: API for adding items in a cart.
+      operationId: addCartItem
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: body
+          description: An array of items to be added to the cart.
+          in: body
+          schema:
+            type: array
+            items:
+              type: object
+              required:
+                - productId
+                - quantity
+              properties:
+                productId:
+                  type: string
+                quantity:
+                  type: integer
+      responses:
+        201:
+          description: A collection of newly added items to the cart.
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                itemId:
+                  type: string
+        400:
+          $ref: '#/responses/BadRequest'
+        402:
+          $ref: '#/responses/PaidOperation'
+        401:
+          $ref: '#/responses/ExpiredSession'
+        403:
+          $ref: '#/responses/UnauthorizedRequest'
+        404:
+          $ref: '#/responses/ResourceNotFound'
+        405:
+          $ref: '#/responses/MethodNotAllowed'
+        409:
+          $ref: '#/responses/DuplicateResource'
+        422:
+          $ref: '#/responses/UnprocessableEntity'
+        429:
+          $ref: '#/responses/TooManyRequests'
+        500:
+          $ref: '#/responses/ServerError'
+        503:
+          $ref: '#/responses/ServerUnavailable'
+    delete:
+      tags:
+        - Cart
+      summary: Empties the cart
+      description: API for emptying the cart.
+      operationId: emptyCart
+      security:
+        - bearerAuth: []
+      responses:
+        204:
+          $ref: '#/responses/ResourceDeleted'
+        400:
+          $ref: '#/responses/BadRequest'
+        402:
+          $ref: '#/responses/PaidOperation'
+        401:
+          $ref: '#/responses/ExpiredSession'
+        403:
+          $ref: '#/responses/UnauthorizedRequest'
+        404:
+          $ref: '#/responses/ResourceNotFound'
+        410:
+          $ref: '#/responses/DeletedResource'
+        422:
+          $ref: '#/responses/UnprocessableEntity'
+        429:
+          $ref: '#/responses/TooManyRequests'
+        500:
+          $ref: '#/responses/ServerError'
+        503:
+          $ref: '#/responses/ServerUnavailable'
+
+  /cart/items/{id}/quantity:
+    put:
+      tags:
+        - Cart
+      summary: Updates a cart item quantity.
+      description: API for updating the quantity of a cart item.
+      operationId: updateCartItemQuantity
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          description: A cart item identifier.
+          in: path
+          required: true
+          type: string
+        - name: quantity
+          description: The new cart item quantity.
+          in: body
+          schema:
+            type: object
+            properties:
+              quantity:
+                type: integer
+            required:
+              - quantity
+      responses:
+        204:
+          $ref: '#/responses/ResourceUpdated'
+        400:
+          $ref: '#/responses/BadRequest'
+        402:
+          $ref: '#/responses/PaidOperation'
+        401:
+          $ref: '#/responses/ExpiredSession'
+        403:
+          $ref: '#/responses/UnauthorizedRequest'
+        404:
+          $ref: '#/responses/ResourceNotFound'
+        409:
+          $ref: '#/responses/ResourceConflict'
+        410:
+          $ref: '#/responses/DeletedResource'
+        422:
+          $ref: '#/responses/UnprocessableEntity'
+        429:
+          $ref: '#/responses/TooManyRequests'
+        500:
+          $ref: '#/responses/ServerError'
+        503:
+          $ref: '#/responses/ServerUnavailable'
+
+  /cart/items/{id}:
+    delete:
+      tags:
+        - Cart
+      summary: Removes an item from the cart.
+      description: API for removing an item from the cart.
+      operationId: removeOneProduct
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          description: A cart item unique identifier.
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          $ref: '#/responses/ResourceDeleted'
+        400:
+          $ref: '#/responses/BadRequest'
+        402:
+          $ref: '#/responses/PaidOperation'
+        401:
+          $ref: '#/responses/ExpiredSession'
+        403:
+          $ref: '#/responses/UnauthorizedRequest'
+        404:
+          $ref: '#/responses/ResourceNotFound'
+        410:
+          $ref: '#/responses/DeletedResource'
+        422:
+          $ref: '#/responses/UnprocessableEntity'
+        429:
+          $ref: '#/responses/TooManyRequests'
+        500:
+          $ref: '#/responses/ServerError'
+        503:
+          $ref: '#/responses/ServerUnavailable'
+
+  /products/{id}:
+    get:
+      tags:
+        - Product
+      summary: Get one product.
+      description: API for getting one product.
+      operationId: getOneProduct
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          description: A product unique identifier.
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: ""
+          schema:
+            $ref: '#/definitions/Product'
+        304:
+          $ref: '#/responses/NotModified'
+        400:
+          $ref: '#/responses/BadRequest'
+        401:
+          $ref: '#/responses/ExpiredSession'
+        403:
+          $ref: '#/responses/AccessDenied'
+        404:
+          $ref: '#/responses/ResourceNotFound'
+        422:
+          $ref: '#/responses/UnprocessableEntity'
+        429:
+          $ref: '#/responses/TooManyRequests'
+        500:
+          $ref: '#/responses/ServerError'
+        503:
+          $ref: '#/responses/ServerUnavailable'
+
+
+definitions:
+  Product:
+    title: Product
+    type: object
+    properties:
+      id:
+        type: string
+        description: A product identifier.
+        readOnly: true
+      name:
+        type: string
+        description: Name.
+        readOnly: true
+      price:
+        type: integer
+        description: Price
+  Error:
+    type: object
+    properties:
+      error:
+        readOnly: true
+        description: Error details.
+        type: array
+        items:
+          type: object
+          title: Error Detail
+          properties:
+            code:
+              type: string
+              description: Error code.
+            message:
+              type: string
+              description: Error message.
+            description:
+              type: string
+              description: Error description.
+            file:
+              type: string
+              description: File name where the error was caught.
+            line:
+              type: string
+              description: Line number where the error was caught.
+
+responses:
+  RequestPerformed: # HTTP 204
+    description: The request was successfully performed.
+  RequestAccepted: # HTTP 202
+    description: The request was accepted.
+
+  ResourceUpdated: # HTTP 204
+    description: The resource was successfully updated.
+  ResourceDeleted: # HTTP 204
+    description: The resource was successfully deleted.
+
+  NotModified: # HTTP 304
+    description: Resource was not modified.
+
+  BadRequest: # HTTP 400
+    description: Invalid, incomplete or malformed request.
+    schema:
+      $ref: '#/definitions/Error'
+  ExpiredSession: # HTTP 401
+    description: User session has expired.
+    schema:
+      $ref: '#/definitions/Error'
+  PaidResource: # HTTP 402
+    description: The resource you are trying to access requires a payment to be settled.
+    schema:
+      $ref: '#/definitions/Error'
+  PaidCollection: # HTTP 402
+    description: The collection you are trying to access requires a payment to be settled.
+    schema:
+      $ref: '#/definitions/Error'
+  PaidOperation: # HTTP 402
+    description: The operation you are trying to perform requires a payment to be settled.
+    schema:
+      $ref: '#/definitions/Error'
+  AccessDenied: # HTTP 403
+    description: User has no permission to access this resource.
+    schema:
+      $ref: '#/definitions/Error'
+  UnauthorizedRequest: # HTTP 403
+    description: User has no permission to perform this request.
+    schema:
+      $ref: '#/definitions/Error'
+  ResourceNotFound: # HTTP 404
+    description: The resource you are trying to access does not exist.
+    schema:
+      $ref: '#/definitions/Error'
+  MethodNotAllowed: # HTTP 405
+    description: The resource is not supporting the HTTP method you are using.
+    schema:
+      $ref: '#/definitions/Error'
+  DeletedResource: # HTTP 410
+    description: The resource you are trying to access was already deleted.
+    schema:
+      $ref: '#/definitions/Error'
+  DuplicateResource: # HTTP 409
+    description: Resource already exists.
+    schema:
+      $ref: '#/definitions/Error'
+  ResourceConflict: # HTTP 409
+    description: There was a conflict encountered when updating the resource.
+    schema:
+      $ref: '#/definitions/Error'
+  UnprocessableEntity: # HTTP 422
+    description: Validation Error.
+    schema:
+      $ref: '#/definitions/Error'
+  TooManyRequests: # HTTP 429
+    description: User has sent too many requests and needed to be throttled.
+    schema:
+      $ref: '#/definitions/Error'
+  ServerError: # HTTP 500
+    description: A server or application error was encountered.
+    schema:
+      $ref: '#/definitions/Error'
+  ServerUnavailable: # HTTP 503
+    description: The server is unavailable at the moment.
+    schema:
+      $ref: '#/definitions/Error'
+
+securityDefinitions:
+  bearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
