@@ -1,6 +1,6 @@
 const fs = require('fs');
 const tmpDirectory = require('temp-dir');
-const productsDirectory = tmpDirectory + '/products';
+const productsDirectory = tmpDirectory + '/shopping-cart/products';
 const products = [
     {
         "id": "product-1",
@@ -30,7 +30,7 @@ const products = [
 
 module.exports.prepare = () => {
     if (!fs.existsSync(productsDirectory)) {
-        fs.mkdirSync(productsDirectory);
+        fs.mkdirSync(productsDirectory, { recursive: true });
     }
 
     /**

@@ -11,5 +11,18 @@ module.exports = {
     parse: (options) => {
         const jwt = require('express-jwt');
         return new jwt(options);
+    },
+    verify: (token, appSecret) => {
+
+        const jwt = require('jsonwebtoken');
+        return jwt.verify(token, appSecret, function (err, payload) {
+            if (err) {
+                throw err;
+            }
+            if (payload) {
+                return payload.data.id;
+            }
+            return null;
+        })
     }
 }
