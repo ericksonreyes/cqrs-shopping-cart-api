@@ -7,7 +7,6 @@ function storeNewOrder(newOrder) {
     const orderPathAndName = ordersDirectory + '/' + newOrder.id;
     fs.writeFile(orderPathAndName, JSON.stringify(newOrder), function (err) {
         if (err) throw err;
-        console.log(orderPathAndName + ' was created.');
     });
 }
 

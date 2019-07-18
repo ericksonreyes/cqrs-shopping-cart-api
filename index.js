@@ -27,7 +27,7 @@ app.use(
         )
 );
 
-app.use(function(req,res,next){
+app.use(function (req, res, next) {
     const token = req.headers.authorization.split(" ")[1]
     customerId = jwt.verify(token, appSecret);
     next()
@@ -264,9 +264,9 @@ app.delete('/v1/api/cart/items/:id', (req, res) => {
 app.post('/v1/api/cart/checkout', (req, res) => {
 
     let items = cart.findAll();
-    let newOrder =   {
+    let newOrder = {
         id: uuid(),
-        status: "Order Created",
+        status: "Pending",
         customerId: customerId,
         postedOn: Date.now(),
         lastUpdatedOn: null,
@@ -274,7 +274,7 @@ app.post('/v1/api/cart/checkout', (req, res) => {
     }
     const itemCount = items.length;
 
-    for(let itemIndex = 0; itemIndex < itemCount; itemIndex++) {
+    for (let itemIndex = 0; itemIndex < itemCount; itemIndex++) {
         let item = items[itemIndex];
 
         newOrder.items.push({
@@ -360,14 +360,14 @@ app.put('/v1/api/orders/:id/cancel', (req, res) => {
         return;
     }
 
-    if (order.status === 'Processing') {
+    if (order.status === 'Accepted') {
         res.status(422).json(
             {
                 "error": [
                     {
-                        "code": "OrderIsBeingProcessed",
-                        "message": "Order is being processed.",
-                        "description": "Your order with id " + cartItem.productId + " is being prepared " +
+                        "code": "OrderWasAccepted",
+                        "message": "Order was accepted.",
+                        "description": "Your order with id " + cartItem.productId + " was accepted and being prepared " +
                             "and can't be cancelled."
                     }
                 ]
@@ -409,7 +409,7 @@ app.put('/v1/api/orders/:id/cancel', (req, res) => {
     }
 
     order.status = 'Cancelled';
-    orders.store([order]);
+    orders.store(order);
     res.status(204);
     res.end();
 })
