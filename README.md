@@ -13,7 +13,6 @@ What things you need to install the software and how to install them
 * [NodeJS](http://www.dropwizard.io/1.0.2/docs/)
 * [ExpressJS](https://expressjs.com/)
 * [RabbitMQ](https://www.rabbitmq.com/)
-* [Python3](https://www.python.org/download/releases/3.0/)
 
 ## Versioning
 
