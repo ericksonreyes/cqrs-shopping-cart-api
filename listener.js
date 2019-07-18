@@ -1,8 +1,7 @@
 #!/usr/bin/env node
-const amqp = require('amqplib/callback_api');
+const amqp = require('./modules/amqp');
 const host = 'amqp://localhost';
-
-console.log('Connecting to ' + host);
+const queue = 'orders';
 
 
 const callback = (msg) => {
@@ -19,22 +18,4 @@ const callback = (msg) => {
     }
 }
 
-amqp.connect(host, function (connectError, connection) {
-    if (connectError) {
-        throw connectError;
-    }
-
-    connection.createChannel(function (createChannelErr, channel) {
-        if (createChannelErr) {
-            throw createChannelErr;
-        }
-
-        console.log('Connected to ' + host);
-        const queue = 'orders';
-        channel.assertQueue(queue, {durable: false});
-
-
-        console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
-        channel.consume(queue, callback, {noAck: true});
-    });
-});
+amqp.listen(host, queue, callback);

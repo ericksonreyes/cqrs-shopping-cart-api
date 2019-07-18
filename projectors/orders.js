@@ -10,7 +10,7 @@ module.exports.projectThis = (event) => {
     if (entityType === 'Order') {
         const order = orders.findOne(entityId);
         switch (eventName) {
-            case 'OrderWasCreated':
+            case 'OrderWasPlaced':
                 orders.store({
                     id: entityId,
                     status: "Pending",
