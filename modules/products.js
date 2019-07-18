@@ -44,7 +44,6 @@ module.exports.prepare = () => {
             let productPathAndName = productsDirectory + '/' + product.id;
             fs.writeFile(productPathAndName, JSON.stringify(product), function (err) {
                 if (err) throw err;
-                console.log(productPathAndName + ' was created.');
             });
         }
     }

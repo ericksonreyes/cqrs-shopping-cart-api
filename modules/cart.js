@@ -6,7 +6,6 @@ function storeNewItem(newItem) {
     const itemPathAndName = cartDirectory + '/' + newItem.id;
     fs.writeFile(itemPathAndName, JSON.stringify(newItem), function (err) {
         if (err) throw err;
-        console.log(itemPathAndName + ' was created.');
     });
 }
 

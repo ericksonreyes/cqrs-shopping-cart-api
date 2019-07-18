@@ -1,11 +1,16 @@
 const express = require('express')
 const jwt = require('./modules/jwt')
 const cors = require('cors')
+const uuid = require('uuid/v1');
 const pathToRegexp = require('path-to-regexp')
+
 const products = require('./modules/products');
 const cart = require('./modules/cart');
 const orders = require('./modules/orders');
-const uuid = require('uuid/v1');
+const event = require('./modules/event');
+const amqp = require('./modules/amqp');
+const amqpHost = 'amqp://localhost';
+const amqpQueue = 'orders';
 
 const app = express()
 const port = 3000
@@ -27,9 +32,11 @@ app.use(
         )
 );
 
-app.use(function(req,res,next){
-    const token = req.headers.authorization.split(" ")[1]
-    customerId = jwt.verify(token, appSecret);
+app.use(function (req, res, next) {
+    if (req.headers.authorization) {
+        const token = req.headers.authorization.split(" ")[1]
+        customerId = jwt.verify(token, appSecret);
+    }
     next()
 });
 
@@ -262,11 +269,11 @@ app.delete('/v1/api/cart/items/:id', (req, res) => {
 })
 
 app.post('/v1/api/cart/checkout', (req, res) => {
-
-    let items = cart.findAll();
-    let newOrder =   {
-        id: uuid(),
-        status: "Order Created",
+    const orderId = uuid();
+    const items = cart.findAll();
+    let newOrder = {
+        id: orderId,
+        status: "Pending",
         customerId: customerId,
         postedOn: Date.now(),
         lastUpdatedOn: null,
@@ -274,7 +281,7 @@ app.post('/v1/api/cart/checkout', (req, res) => {
     }
     const itemCount = items.length;
 
-    for(let itemIndex = 0; itemIndex < itemCount; itemIndex++) {
+    for (let itemIndex = 0; itemIndex < itemCount; itemIndex++) {
         let item = items[itemIndex];
 
         newOrder.items.push({
@@ -286,8 +293,16 @@ app.post('/v1/api/cart/checkout', (req, res) => {
     }
 
     if (newOrder.items.length > 0) {
-        orders.store(newOrder);
         cart.empty();
+
+        /**
+         * Publish this event.
+         */
+        amqp.send(
+            amqpHost,
+            amqpQueue,
+            event.new('OrderWasPlaced', 'Order', orderId, newOrder)
+        );
         res.status(201).json(newOrder);
         return;
     }
@@ -352,7 +367,7 @@ app.put('/v1/api/orders/:id/cancel', (req, res) => {
                     {
                         "code": "OrderAlreadyCancelled",
                         "message": "Order already cancelled.",
-                        "description": "Your order with id " + cartItem.productId + " was already cancelled."
+                        "description": "Your order with id " + req.params.id + " was already cancelled."
                     }
                 ]
             }
@@ -360,14 +375,14 @@ app.put('/v1/api/orders/:id/cancel', (req, res) => {
         return;
     }
 
-    if (order.status === 'Processing') {
+    if (order.status === 'Accepted') {
         res.status(422).json(
             {
                 "error": [
                     {
-                        "code": "OrderIsBeingProcessed",
-                        "message": "Order is being processed.",
-                        "description": "Your order with id " + cartItem.productId + " is being prepared " +
+                        "code": "OrderWasAccepted",
+                        "message": "Order was accepted.",
+                        "description": "Your order with id " + req.params.id + " was accepted and being prepared " +
                             "and can't be cancelled."
                     }
                 ]
@@ -383,7 +398,7 @@ app.put('/v1/api/orders/:id/cancel', (req, res) => {
                     {
                         "code": "OrderWasShipped",
                         "message": "Order was shipped.",
-                        "description": "Your order with id " + cartItem.productId + " was already shipped " +
+                        "description": "Your order with id " + req.params.id + " was already shipped " +
                             "and can't be cancelled."
                     }
                 ]
@@ -399,7 +414,7 @@ app.put('/v1/api/orders/:id/cancel', (req, res) => {
                     {
                         "code": "OrderWasCompleted",
                         "message": "Order was completed.",
-                        "description": "Your order with id " + cartItem.productId + " was already completed " +
+                        "description": "Your order with id " + req.params.id + " was already completed " +
                             "and can't be cancelled."
                     }
                 ]
@@ -409,7 +424,16 @@ app.put('/v1/api/orders/:id/cancel', (req, res) => {
     }
 
     order.status = 'Cancelled';
-    orders.store([order]);
+    order.lastUpdatedOn = Date.now();
+
+    /**
+     * Publish this event.
+     */
+    amqp.send(
+        amqpHost,
+        amqpQueue,
+        event.new('OrderWasCancelled', 'Order', order.id, order)
+    );
     res.status(204);
     res.end();
 })
