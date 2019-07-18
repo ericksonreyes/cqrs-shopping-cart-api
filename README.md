@@ -1,6 +1,6 @@
-# CQRS &amp; Event Sourcing Inspired Shopping Cart API
+# CQRS &amp; Event Sourcing Inspired Shopping Cart REST API
 
-This will be the Shopping Cart REST API that will place orders to the [Order Fulfillment API](https://github.com/ericksonreyes/cqrs-order-fulfillment-api). 
+This will be the Shopping Cart REST API that will place orders to the [Order Fulfillment REST API](https://github.com/ericksonreyes/cqrs-order-fulfillment-api). 
 
 ### Prerequisites
 
