@@ -1,6 +1,6 @@
 const fs = require('fs');
 const tmpDirectory = require('temp-dir');
-const cartDirectory = tmpDirectory + '/cart';
+const cartDirectory = tmpDirectory + '/shopping-cart/cart';
 
 function storeNewItem(newItem) {
     const itemPathAndName = cartDirectory + '/' + newItem.id;
@@ -12,7 +12,7 @@ function storeNewItem(newItem) {
 
 module.exports.prepare = () => {
     if (!fs.existsSync(cartDirectory)) {
-        fs.mkdirSync(cartDirectory);
+        fs.mkdirSync(cartDirectory, { recursive: true });
     }
 }
 
@@ -50,7 +50,7 @@ module.exports.store = (newItems) => {
         }
         return;
     }
-    module.storeNewItem(newItems);
+    storeNewItem(newItems);
 }
 
 module.exports.findOne = (id) => {

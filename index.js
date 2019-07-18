@@ -4,10 +4,13 @@ const cors = require('cors')
 const pathToRegexp = require('path-to-regexp')
 const products = require('./modules/products');
 const cart = require('./modules/cart');
+const orders = require('./modules/orders');
+const uuid = require('uuid/v1');
 
 const app = express()
 const port = 3000
 const appSecret = 'secret-word'
+let customerId = null;
 
 app.use(cors())
 app.use(express.json())
@@ -23,6 +26,13 @@ app.use(
             }
         )
 );
+
+app.use(function(req,res,next){
+    const token = req.headers.authorization.split(" ")[1]
+    customerId = jwt.verify(token, appSecret);
+    next()
+});
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
 
@@ -31,6 +41,7 @@ app.listen(port, () => console.log(`Example app listening on port ${port}!`))
  */
 products.prepare();
 cart.prepare();
+orders.prepare();
 
 
 /**
@@ -65,7 +76,8 @@ app.get('/v1/api/products', (req, res) => {
 })
 
 app.get('/v1/api/products/:id', (req, res) => {
-    if (products.findOne(req.params.id) === null) {
+    const product = products.findOne(req.params.id);
+    if (product === null) {
         res.status(404).json(
             {
                 "error": [
@@ -79,7 +91,7 @@ app.get('/v1/api/products/:id', (req, res) => {
         );
     }
 
-    res.json(products.findOne(req.params.id));
+    res.json(product);
 })
 
 
@@ -97,7 +109,6 @@ app.post('/v1/api/cart/items', (req, res) => {
     const numberOfNewItems = newItems.length;
 
     if (numberOfNewItems > 0) {
-        const uuid = require('uuid/v1');
         let newItemsToBeStored = [];
 
         for (let itemIndex = 0; itemIndex < numberOfNewItems; itemIndex++) {
@@ -155,7 +166,7 @@ app.post('/v1/api/cart/items', (req, res) => {
                     id: uuid(),
                     productId: product.id,
                     price: product.price,
-                    status: 'Added to cart.',
+                    status: 'Added to cart',
                     quantity: newItem.quantity
                 }
                 newItemsToBeStored.push(newItemToBeStored);
@@ -166,6 +177,7 @@ app.post('/v1/api/cart/items', (req, res) => {
         if (newItemsToBeStored.length > 0) {
             cart.store(newItemsToBeStored);
             res.status(201).json(newItemsToBeStored);
+            return;
         }
     }
 
@@ -245,6 +257,159 @@ app.delete('/v1/api/cart/items/:id', (req, res) => {
         );
     }
     cart.remove(req.params.id);
+    res.status(204);
+    res.end();
+})
+
+app.post('/v1/api/cart/checkout', (req, res) => {
+
+    let items = cart.findAll();
+    let newOrder =   {
+        id: uuid(),
+        status: "Order Created",
+        customerId: customerId,
+        postedOn: Date.now(),
+        lastUpdatedOn: null,
+        items: []
+    }
+    const itemCount = items.length;
+
+    for(let itemIndex = 0; itemIndex < itemCount; itemIndex++) {
+        let item = items[itemIndex];
+
+        newOrder.items.push({
+            id: uuid(),
+            productId: item.productId,
+            price: item.price,
+            quantity: item.quantity
+        });
+    }
+
+    if (newOrder.items.length > 0) {
+        orders.store(newOrder);
+        cart.empty();
+        res.status(201).json(newOrder);
+        return;
+    }
+
+    res.status(422).json(
+        {
+            "error": [
+                {
+                    "code": "EmptyShoppingCart",
+                    "message": "Empty shopping cart.",
+                    "description": "Your shopping cart is empty. Nothing to order."
+                }
+            ]
+        }
+    );
+})
+
+
+app.get('/v1/api/orders', (req, res) => {
+    res.json(orders.findAll());
+});
+
+app.get('/v1/api/orders/:id', (req, res) => {
+    const order = orders.findOne(req.params.id);
+    if (order === null) {
+        res.status(404).json(
+            {
+                "error": [
+                    {
+                        "code": "OrderNotFound",
+                        "message": "Order not found.",
+                        "description": "The order with id " + req.params.id + " does not exist."
+                    }
+                ]
+            }
+        );
+    }
+
+    res.json(order);
+})
+
+app.put('/v1/api/orders/:id/cancel', (req, res) => {
+    const order = orders.findOne(req.params.id);
+    if (order === null) {
+        res.status(404).json(
+            {
+                "error": [
+                    {
+                        "code": "OrderNotFound",
+                        "message": "Order not found.",
+                        "description": "The order with id " + req.params.id + " does not exist."
+                    }
+                ]
+            }
+        );
+    }
+
+    if (order.status === 'Cancelled') {
+        res.status(422).json(
+            {
+                "error": [
+                    {
+                        "code": "OrderAlreadyCancelled",
+                        "message": "Order already cancelled.",
+                        "description": "Your order with id " + cartItem.productId + " was already cancelled."
+                    }
+                ]
+            }
+        );
+        return;
+    }
+
+    if (order.status === 'Processing') {
+        res.status(422).json(
+            {
+                "error": [
+                    {
+                        "code": "OrderIsBeingProcessed",
+                        "message": "Order is being processed.",
+                        "description": "Your order with id " + cartItem.productId + " is being prepared " +
+                            "and can't be cancelled."
+                    }
+                ]
+            }
+        );
+        return;
+    }
+
+    if (order.status === 'Shipped') {
+        res.status(422).json(
+            {
+                "error": [
+                    {
+                        "code": "OrderWasShipped",
+                        "message": "Order was shipped.",
+                        "description": "Your order with id " + cartItem.productId + " was already shipped " +
+                            "and can't be cancelled."
+                    }
+                ]
+            }
+        );
+        return;
+    }
+
+    if (order.status === 'Completed') {
+        res.status(422).json(
+            {
+                "error": [
+                    {
+                        "code": "OrderWasCompleted",
+                        "message": "Order was completed.",
+                        "description": "Your order with id " + cartItem.productId + " was already completed " +
+                            "and can't be cancelled."
+                    }
+                ]
+            }
+        );
+        return;
+    }
+
+    order.status = 'Cancelled';
+    orders.store([order]);
     res.status(204);
     res.end();
 })
