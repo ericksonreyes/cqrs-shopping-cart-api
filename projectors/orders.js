@@ -31,6 +31,9 @@ module.exports.projectThis = (event) => {
                 if (order) {
                     order.status = 'Shipped';
                     order.lastUpdatedOn = happenedOn;
+                    order.shipper = data.shipper;
+                    order.trackingId = data.trackingId;
+                    order.dateShipped = data.dateShipped;
                     orders.store(order)
                 }
                 break;
@@ -38,6 +41,7 @@ module.exports.projectThis = (event) => {
                 if (order) {
                     order.status = 'Cancelled';
                     order.lastUpdatedOn = happenedOn;
+                    order.reason = data.reason;
                     orders.store(order)
                 }
                 break;
