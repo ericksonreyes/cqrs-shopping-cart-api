@@ -35,6 +35,7 @@ You can use the content of the [OpenAPI specification](./swagger.yml) of the RES
 * [Postman](https://www.getpostman.com)
 
 The expressjs and swagger.yml host is already http://localhost:3000 by default. So no need to configure much and just test the application.
+Also the application is using the default credentials of RabbitMQ (guest/guest) so no need to configure it too.
 
 ## Built With
 
