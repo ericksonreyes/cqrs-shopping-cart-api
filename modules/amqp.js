@@ -8,7 +8,6 @@ module.exports = {
     send: (host, queue, exchange, msg) => {
         const amqpMsg = JSON.stringify(msg);
 
-        console.log(' NodeJS: Connecting to ' + host);
         amqp.connect(host, function (connectError, connection) {
             if (connectError) {
                 throw connectError;
@@ -27,7 +26,7 @@ module.exports = {
         });
     },
     listen: (host, queue, exchange, callback) => {
-        console.log(' NodeJS: Connecting to ' + host);
+        console.log(' Creates projections from domain events.');
         amqp.connect(host, function (connectError, connection) {
             if (connectError) {
                 throw connectError;
@@ -43,7 +42,6 @@ module.exports = {
                 });
                 channel.assertQueue(queue, {durable: durable, exclusive: exclusive});
                 channel.bindQueue(queue, exchange, queue);
-                console.log(' NodeJS: Connected to ' + host);
 
                 channel.consume(queue, (msg) => {
                     callback(msg);
