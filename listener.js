@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const amqp = require('./modules/amqp');
 const host = 'amqp://localhost';
-const queue = 'orders';
+const queue = 'NodeJS_orders';
 const exchange = 'orders';
 
 const callback = (msg) => {
