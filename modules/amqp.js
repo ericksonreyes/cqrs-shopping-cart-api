@@ -8,7 +8,7 @@ module.exports = {
     send: (host, queue, exchange, msg) => {
         const amqpMsg = JSON.stringify(msg);
 
-        console.log('Connecting to ' + host);
+        console.log(' NodeJS: Connecting to ' + host);
         amqp.connect(host, function (connectError, connection) {
             if (connectError) {
                 throw connectError;
@@ -22,12 +22,12 @@ module.exports = {
                 channel.assertExchange(exchange, 'fanout', {durable: durable});
                 channel.bindQueue(queue, exchange, queue);
                 channel.publish(exchange, '', Buffer.from(amqpMsg));
-                console.log(" [x] Sent %s", amqpMsg);
+                console.log(" NodeJS: [x] Sent %s", amqpMsg);
             });
         });
     },
     listen: (host, queue, exchange, callback) => {
-        console.log('Connecting to ' + host);
+        console.log(' NodeJS: Connecting to ' + host);
         amqp.connect(host, function (connectError, connection) {
             if (connectError) {
                 throw connectError;
@@ -43,13 +43,13 @@ module.exports = {
                 });
                 channel.assertQueue(queue, {durable: durable, exclusive: exclusive});
                 channel.bindQueue(queue, exchange, queue);
-                console.log('Connected to ' + host);
+                console.log(' NodeJS: Connected to ' + host);
 
                 channel.consume(queue, (msg) => {
                     callback(msg);
                     channel.ack(msg);
                 }, {noAck: noAck});
-                console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
+                console.log(" NodeJS: [*] Waiting for messages in %s. To exit press CTRL+C", queue);
             });
         });
     }
