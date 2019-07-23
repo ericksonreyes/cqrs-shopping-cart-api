@@ -2,7 +2,7 @@
 const amqp = require('./modules/amqp');
 const host = 'amqp://localhost';
 const queue = 'orders';
-
+const exchange = 'orders';
 
 const callback = (msg) => {
     try {
@@ -18,4 +18,4 @@ const callback = (msg) => {
     }
 }
 
-amqp.listen(host, queue, callback);
+amqp.listen(host, queue, exchange, callback);

@@ -11,6 +11,7 @@ const event = require('./modules/event');
 const amqp = require('./modules/amqp');
 const amqpHost = 'amqp://localhost';
 const amqpQueue = 'orders';
+const amqpExchange = 'orders';
 
 const app = express()
 const port = 3000
@@ -301,7 +302,8 @@ app.post('/v1/api/cart/checkout', (req, res) => {
         amqp.send(
             amqpHost,
             amqpQueue,
-            event.new('OrderWasPlaced', 'Order', orderId, newOrder)
+            amqpExchange,
+            event.new('OrderWasPlaced', customerId, 'Order', orderId, newOrder)
         );
         res.status(201).json(newOrder);
         return;
@@ -432,7 +434,8 @@ app.put('/v1/api/orders/:id/cancel', (req, res) => {
     amqp.send(
         amqpHost,
         amqpQueue,
-        event.new('OrderWasCancelled', 'Order', order.id, order)
+        amqpExchange,
+        event.new('OrderWasCancelled', customerId, 'Order', order.id, order)
     );
     res.status(204);
     res.end();
