@@ -26,7 +26,7 @@ The projection will be saved in the tmp folder too. You will see it in the order
 
 ## Starting the application
 * Run ```npm start``` to start the REST API server.
-* Run ```node listener.js``` to start the event listener. 
+* Run ```npm run listener``` to start the event listener. 
 
 ## How to use
 You can use the content of the [OpenAPI specification](./swagger.yml) of the REST API in the following:
