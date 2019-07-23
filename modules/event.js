@@ -1,7 +1,7 @@
 const uuid = require('uuid/v1');
 
 module.exports.new = (eventName, raisedBy, entityType, entityId, data) => {
-    const happenedOn = Date.now();
+    const happenedOn = Math.floor(Date.now() / 1000);
 
     data.entityId = entityId;
     data.raisedBy = raisedBy;

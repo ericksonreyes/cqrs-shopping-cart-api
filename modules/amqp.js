@@ -1,6 +1,7 @@
 const amqp = require('amqplib/callback_api');
 const durable = true;
 const exclusive = false;
+const noAck = false;
 
 module.exports = {
 
@@ -18,12 +19,9 @@ module.exports = {
                     throw createChannelErr;
                 }
 
-                channel.assertExchange(exchange, 'fanout', {
-                    durable: durable
-                });
-                channel.assertQueue(queue, {durable: durable, exclusive: exclusive});
-                channel.publish(exchange, queue, Buffer.from(amqpMsg));
-
+                channel.assertExchange(exchange, 'fanout', {durable: durable});
+                channel.bindQueue(queue, exchange, queue);
+                channel.publish(exchange, '', Buffer.from(amqpMsg));
                 console.log(" [x] Sent %s", amqpMsg);
             });
         });
@@ -43,12 +41,15 @@ module.exports = {
                 channel.assertExchange(exchange, 'fanout', {
                     durable: durable
                 });
-
-                console.log('Connected to ' + host);
                 channel.assertQueue(queue, {durable: durable, exclusive: exclusive});
+                channel.bindQueue(queue, exchange, queue);
+                console.log('Connected to ' + host);
 
+                channel.consume(queue, (msg) => {
+                    callback(msg);
+                    channel.ack(msg);
+                }, {noAck: noAck});
                 console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
-                channel.consume(queue, callback, {noAck: false});
             });
         });
     }
