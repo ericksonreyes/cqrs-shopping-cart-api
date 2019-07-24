@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 const amqp = require('./modules/amqp');
-const host = 'amqp://localhost';
-const queue = 'NodeJS_orders';
-const exchange = 'orders';
+const amqpHost = 'amqp://localhost';
+const amqpQueue = 'DomainEvents';
+const amqpExchange = 'ShoppingCartQueue';
 
 const callback = (msg) => {
     try {
@@ -18,4 +18,4 @@ const callback = (msg) => {
     }
 }
 
-amqp.listen(host, queue, exchange, callback);
+amqp.listen(amqpHost, amqpQueue, amqpExchange, callback);
