@@ -1,4 +1,6 @@
 const orders = require('../modules/orders');
+const moment = require('moment');
+
 
 module.exports.projectThis = (event) => {
     const eventName = event.eventName;
@@ -6,7 +8,10 @@ module.exports.projectThis = (event) => {
     const entityType = event.entityType;
     const data = event.data;
     const happenedOn = event.happenedOn;
+    const context = 'Fulfillment';
+    const eventDate = moment.unix(happenedOn).format("YYYY-MM-DD HH:mm:ss");
 
+    console.log(" NodeJS: [√] %s %s.%s.%s was raised.", eventDate, context, entityType, eventName);
     if (entityType === 'Order') {
         const order = orders.findOne(entityId);
         switch (eventName) {
@@ -53,6 +58,9 @@ module.exports.projectThis = (event) => {
                 }
                 break;
         }
-        console.log(" [√] %s was projected", eventName);
+        const time = moment();
+        const now = time.format("YYYY-MM-DD HH:mm:ss")
+        console.log(" NodeJS: [√] %s Projected by order.js", now);
+
     }
 }

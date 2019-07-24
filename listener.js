@@ -14,7 +14,7 @@ const callback = (msg) => {
         }
     }
     catch (err) {
-        console.log(" [x] %s", err);
+        console.log(" NodeJS: [x] %s", err);
     }
 }
 
