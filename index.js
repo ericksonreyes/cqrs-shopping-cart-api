@@ -10,8 +10,8 @@ const orders = require('./modules/orders');
 const event = require('./modules/event');
 const amqp = require('./modules/amqp');
 const amqpHost = 'amqp://localhost';
-const amqpQueue = 'NodeJS_orders';
-const amqpExchange = 'orders';
+const amqpQueue = 'ShoppingCartQueue';
+const amqpExchange = 'DomainEvents';
 
 const app = express()
 const port = 3000

@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "clear && nodemon index.js",
-    "listener": "clear && nodemon listener.js"
+    "start": "nodemon index.js",
+    "listener": "nodemon listener.js"
   },
   "repository": {
     "type": "git",
