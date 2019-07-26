@@ -4,7 +4,7 @@ info:
   title: "CQRS & Event Sourcing Inspired Shopping Cart API"
   description: "CQRS & Event Sourcing Inspired Shopping Cart API"
   contact:
-    email: "support@acme.com"
+    email: "ercbluemonday@yahoo.com"
 host: "localhost:3000"
 basePath: "/v1/api/"
 schemes:
@@ -93,10 +93,6 @@ paths:
           $ref: '#/responses/AccessDenied'
         404:
           $ref: '#/responses/ResourceNotFound'
-        422:
-          $ref: '#/responses/UnprocessableEntity'
-        429:
-          $ref: '#/responses/TooManyRequests'
         500:
           $ref: '#/responses/ServerError'
         503:
@@ -137,8 +133,6 @@ paths:
                   type: string
         400:
           $ref: '#/responses/BadRequest'
-        402:
-          $ref: '#/responses/PaidOperation'
         401:
           $ref: '#/responses/ExpiredSession'
         403:
@@ -149,10 +143,6 @@ paths:
           $ref: '#/responses/MethodNotAllowed'
         409:
           $ref: '#/responses/DuplicateResource'
-        422:
-          $ref: '#/responses/UnprocessableEntity'
-        429:
-          $ref: '#/responses/TooManyRequests'
         500:
           $ref: '#/responses/ServerError'
         503:
@@ -170,22 +160,12 @@ paths:
           $ref: '#/responses/RequestPerformed'
         400:
           $ref: '#/responses/BadRequest'
-        402:
-          $ref: '#/responses/PaidOperation'
         401:
           $ref: '#/responses/ExpiredSession'
         403:
           $ref: '#/responses/UnauthorizedRequest'
         404:
           $ref: '#/responses/ResourceNotFound'
-        410:
-          $ref: '#/responses/DeletedResource'
-        422:
-          $ref: '#/responses/UnprocessableEntity'
-        429:
-          $ref: '#/responses/TooManyRequests'
-        500:
-          $ref: '#/responses/ServerError'
         503:
           $ref: '#/responses/ServerUnavailable'
 
@@ -219,8 +199,6 @@ paths:
           $ref: '#/responses/ResourceUpdated'
         400:
           $ref: '#/responses/BadRequest'
-        402:
-          $ref: '#/responses/PaidOperation'
         401:
           $ref: '#/responses/ExpiredSession'
         403:
@@ -229,12 +207,6 @@ paths:
           $ref: '#/responses/ResourceNotFound'
         409:
           $ref: '#/responses/ResourceConflict'
-        410:
-          $ref: '#/responses/DeletedResource'
-        422:
-          $ref: '#/responses/UnprocessableEntity'
-        429:
-          $ref: '#/responses/TooManyRequests'
         500:
           $ref: '#/responses/ServerError'
         503:
@@ -260,22 +232,12 @@ paths:
           $ref: '#/responses/ResourceDeleted'
         400:
           $ref: '#/responses/BadRequest'
-        402:
-          $ref: '#/responses/PaidOperation'
         401:
           $ref: '#/responses/ExpiredSession'
         403:
           $ref: '#/responses/UnauthorizedRequest'
         404:
           $ref: '#/responses/ResourceNotFound'
-        410:
-          $ref: '#/responses/DeletedResource'
-        422:
-          $ref: '#/responses/UnprocessableEntity'
-        429:
-          $ref: '#/responses/TooManyRequests'
-        500:
-          $ref: '#/responses/ServerError'
         503:
           $ref: '#/responses/ServerUnavailable'
 
@@ -300,22 +262,12 @@ paths:
                   type: string
         400:
           $ref: '#/responses/BadRequest'
-        402:
-          $ref: '#/responses/PaidOperation'
         401:
           $ref: '#/responses/ExpiredSession'
         403:
           $ref: '#/responses/UnauthorizedRequest'
         404:
           $ref: '#/responses/ResourceNotFound'
-        410:
-          $ref: '#/responses/DeletedResource'
-        422:
-          $ref: '#/responses/UnprocessableEntity'
-        429:
-          $ref: '#/responses/TooManyRequests'
-        500:
-          $ref: '#/responses/ServerError'
         503:
           $ref: '#/responses/ServerUnavailable'
 
@@ -337,22 +289,12 @@ paths:
               $ref: '#/definitions/Order'
         400:
           $ref: '#/responses/BadRequest'
-        402:
-          $ref: '#/responses/PaidOperation'
         401:
           $ref: '#/responses/ExpiredSession'
         403:
           $ref: '#/responses/UnauthorizedRequest'
         404:
           $ref: '#/responses/ResourceNotFound'
-        410:
-          $ref: '#/responses/DeletedResource'
-        422:
-          $ref: '#/responses/UnprocessableEntity'
-        429:
-          $ref: '#/responses/TooManyRequests'
-        500:
-          $ref: '#/responses/ServerError'
         503:
           $ref: '#/responses/ServerUnavailable'
 
@@ -386,10 +328,6 @@ paths:
           $ref: '#/responses/AccessDenied'
         404:
           $ref: '#/responses/ResourceNotFound'
-        422:
-          $ref: '#/responses/UnprocessableEntity'
-        429:
-          $ref: '#/responses/TooManyRequests'
         500:
           $ref: '#/responses/ServerError'
         503:
@@ -415,22 +353,12 @@ paths:
           $ref: '#/responses/RequestPerformed'
         400:
           $ref: '#/responses/BadRequest'
-        402:
-          $ref: '#/responses/PaidOperation'
         401:
           $ref: '#/responses/ExpiredSession'
         403:
           $ref: '#/responses/UnauthorizedRequest'
         404:
           $ref: '#/responses/ResourceNotFound'
-        410:
-          $ref: '#/responses/DeletedResource'
-        422:
-          $ref: '#/responses/UnprocessableEntity'
-        429:
-          $ref: '#/responses/TooManyRequests'
-        500:
-          $ref: '#/responses/ServerError'
         503:
           $ref: '#/responses/ServerUnavailable'
 
@@ -458,10 +386,6 @@ paths:
           $ref: '#/responses/AccessDenied'
         404:
           $ref: '#/responses/ResourceNotFound'
-        422:
-          $ref: '#/responses/UnprocessableEntity'
-        429:
-          $ref: '#/responses/TooManyRequests'
         500:
           $ref: '#/responses/ServerError'
         503:
@@ -485,8 +409,6 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/Product'
-        304:
-          $ref: '#/responses/NotModified'
         400:
           $ref: '#/responses/BadRequest'
         401:
@@ -495,10 +417,6 @@ paths:
           $ref: '#/responses/AccessDenied'
         404:
           $ref: '#/responses/ResourceNotFound'
-        422:
-          $ref: '#/responses/UnprocessableEntity'
-        429:
-          $ref: '#/responses/TooManyRequests'
         500:
           $ref: '#/responses/ServerError'
         503:
@@ -585,48 +503,22 @@ definitions:
             message:
               type: string
               description: Error message.
-            description:
-              type: string
-              description: Error description.
-            file:
-              type: string
-              description: File name where the error was caught.
-            line:
-              type: string
-              description: Line number where the error was caught.
 
 responses:
   RequestPerformed: # HTTP 204
     description: The request was successfully performed.
-  RequestAccepted: # HTTP 202
-    description: The request was accepted.
-
   ResourceUpdated: # HTTP 204
     description: The resource was successfully updated.
   ResourceDeleted: # HTTP 204
     description: The resource was successfully deleted.
-
   NotModified: # HTTP 304
     description: Resource was not modified.
-
   BadRequest: # HTTP 400
     description: Invalid, incomplete or malformed request.
     schema:
       $ref: '#/definitions/Error'
   ExpiredSession: # HTTP 401
     description: User session has expired.
-    schema:
-      $ref: '#/definitions/Error'
-  PaidResource: # HTTP 402
-    description: The resource you are trying to access requires a payment to be settled.
-    schema:
-      $ref: '#/definitions/Error'
-  PaidCollection: # HTTP 402
-    description: The collection you are trying to access requires a payment to be settled.
-    schema:
-      $ref: '#/definitions/Error'
-  PaidOperation: # HTTP 402
-    description: The operation you are trying to perform requires a payment to be settled.
     schema:
       $ref: '#/definitions/Error'
   AccessDenied: # HTTP 403
@@ -645,24 +537,12 @@ responses:
     description: The resource is not supporting the HTTP method you are using.
     schema:
       $ref: '#/definitions/Error'
-  DeletedResource: # HTTP 410
-    description: The resource you are trying to access was already deleted.
-    schema:
-      $ref: '#/definitions/Error'
   DuplicateResource: # HTTP 409
     description: Resource already exists.
     schema:
       $ref: '#/definitions/Error'
   ResourceConflict: # HTTP 409
     description: There was a conflict encountered when updating the resource.
-    schema:
-      $ref: '#/definitions/Error'
-  UnprocessableEntity: # HTTP 422
-    description: Validation Error.
-    schema:
-      $ref: '#/definitions/Error'
-  TooManyRequests: # HTTP 429
-    description: User has sent too many requests and needed to be throttled.
     schema:
       $ref: '#/definitions/Error'
   ServerError: # HTTP 500
