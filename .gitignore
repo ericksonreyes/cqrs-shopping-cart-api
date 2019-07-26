@@ -62,3 +62,6 @@ typings/
 
 # Jetbrain stuff
 .idea
+
+# Something from my iMac
+.DS_Store

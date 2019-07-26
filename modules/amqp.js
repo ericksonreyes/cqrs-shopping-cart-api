@@ -47,7 +47,7 @@ module.exports = {
                     callback(msg);
                     channel.ack(msg);
                 }, {noAck: noAck});
-                console.log(" NodeJS: [*] Waiting for messages in %s. To exit press CTRL+C", queue);
+                console.log(" NodeJS: [*] Waiting for events. To exit press CTRL+C");
             });
         });
     }
