@@ -32,6 +32,8 @@
   },
   "devDependencies": {
     "nodemon": "^1.19.4",
-    "dot-prop": ">=5.1.1"
+    "dot-prop": ">=5.1.1",
+    "minimist": ">=1.2.3",
+    "kind-of": ">=6.0.3"
   }
 }
