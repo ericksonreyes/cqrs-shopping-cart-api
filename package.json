@@ -19,18 +19,19 @@
   },
   "homepage": "https://github.com/ericksonreyes/cqrs-shopping-cart-api#readme",
   "dependencies": {
-    "amqplib": "^0.5.3",
+    "amqplib": "^0.5.6",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-jwt": "^6.0.0",
     "fs": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
-    "moment": "^2.24.0",
-    "path-to-regexp": "^3.0.0",
+    "moment": "^2.27.0",
+    "path-to-regexp": "^3.2.0",
     "temp-dir": "^2.0.0",
-    "uuid": "^3.3.2"
+    "uuid": "^3.4.0"
   },
   "devDependencies": {
-    "nodemon": "^1.19.1"
+    "nodemon": "^1.19.4",
+    "dot-prop": ">=5.1.1"
   }
 }
