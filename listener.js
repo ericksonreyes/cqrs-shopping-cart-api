@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const amqp = require('./modules/amqp');
-const amqpHost = 'amqp://localhost';
+const amqpHost = 'amqp://172.17.0.1';
 const amqpQueue = 'ShoppingCartQueue';
 const amqpExchange = 'DomainEvents';
 

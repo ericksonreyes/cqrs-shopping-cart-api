@@ -10,4 +10,48 @@ services:
       - "./:/var/www/html"
       - "./node_modules:/var/www/html/node_modules:delegated"
     tty: true
-    network_mode: host
+    networks:
+      - 'cqrs-node-demo'
+
+  cqrs-node:
+    build:
+      context: .
+      dockerfile: config/docker/nginx.Dockerfile
+    volumes:
+      - "./logs:/var/log:delegated"
+      - "./config/nginx/docker.nginx.conf:/etc/nginx/default.conf:ro"
+      - "./config/nginx/conf:/etc/nginx/conf:ro"
+      - "./config/nginx/servers:/etc/nginx/servers:ro"
+    ports:
+      - '3000:80'
+    depends_on:
+      - server
+    privileged: true
+    tty: true
+    networks:
+      - 'cqrs-node-demo'
+
+  server:
+    build:
+      context: .
+      dockerfile: config/docker/server.Dockerfile
+    volumes:
+      - "./:/var/www/html"
+      - "./node_modules:/var/www/html/node_modules:delegated"
+    networks:
+      - 'cqrs-node-demo'
+
+  listener:
+    build:
+      context: .
+      dockerfile: config/docker/listener.Dockerfile
+    volumes:
+      - "./:/var/www/html"
+      - "./node_modules:/var/www/html/node_modules:delegated"
+    networks:
+      - 'cqrs-node-demo'
+
+
+
+networks:
+  cqrs-node-demo:
