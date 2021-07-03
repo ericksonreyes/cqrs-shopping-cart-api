@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+
+  npm:
+    build:
+      context: .
+      dockerfile: config/docker/npm.Dockerfile
+    volumes:
+      - "./:/var/www/html"
+      - "./node_modules:/var/www/html/node_modules:delegated"
+    tty: true
+    network_mode: host

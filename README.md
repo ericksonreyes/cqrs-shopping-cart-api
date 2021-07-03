@@ -1,11 +1,11 @@
 # CQRS &amp; Event Sourcing Inspired Shopping Cart REST API
 
-This will be the Shopping Cart REST API that will place orders to the [Order Fulfillment REST API](https://github.com/ericksonreyes/cqrs-order-fulfillment-api). 
+This will be the Shopping Cart REST API that will place orders to the [Order Fulfillment REST API](https://github.com/ericksonreyes/cqrs-order-fulfillment-api).
 
 ## Description
 Our goal is to show how CQRS and Event Sourcing works but with minimal configuration so instead of asking you
-to install MySQL or MongoDB we will just use your Operating System's tmp directory for data storage. The codes will be 
-straight-forward with no unit testing or too much design patterns and architecture involved. Everything will be simple. 
+to install MySQL or MongoDB we will just use your Operating System's tmp directory for data storage. The codes will be
+straight-forward with no unit testing or too much design patterns and architecture involved. Everything will be simple.
 
 This repository will play as your public facing Shopping Cart REST API server that your website or mobile applications will consume.
 Let's pretend that it will be in it's own server (NodeJS) with it's own storage (tmp folder).
@@ -13,20 +13,20 @@ Let's pretend that it will be in it's own server (NodeJS) with it's own storage 
 The REST API saves your cart to the storage but not the Orders. When you checkout your cart, the REST API sends a Domain Event
 to the RabbitMQ which publishes it to all it's subscribers.
 
-The [event listener](./listener.js) will generate a projection of the Order from the Domain Event so make sure it is running. 
-The projection will be saved in the tmp folder too. You will see it in the order end point. 
- 
+The [event listener](./listener.js) will generate a projection of the Order from the Domain Event so make sure it is running.
+The projection will be saved in the tmp folder too. You will see it in the order end point.
+
 
 ## Requirements
-* [NodeJS](https://nodejs.org/)
-* [RabbitMQ](https://www.rabbitmq.com/)
+* [Docker](https://www.docker.com/)
 
 ## Installation
-* Run ```npm install```
+* Run ```docker-compose build```
+* Run ```docker-compose run npm install```
 
 ## Starting the application
-* Run ```npm start``` to start the REST API server.
-* Run ```npm run listener``` to start the event listener. 
+* Run ```docker-compose run npm start``` to start the REST API server.
+* Run ```docker-compose run npm run listener``` to start the event listener.
 
 ## How to use
 You can use the content of the [OpenAPI specification](./swagger.yml) of the REST API in the following:
@@ -48,7 +48,7 @@ Also the application is using the default credentials of RabbitMQ (guest/guest) 
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/ericksonreyes/cqrs-shopping-cart-api/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/ericksonreyes/cqrs-shopping-cart-api/tags).
 
 ## Author
 

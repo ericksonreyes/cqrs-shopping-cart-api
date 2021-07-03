@@ -9,7 +9,7 @@ const cart = require('./modules/cart');
 const orders = require('./modules/orders');
 const event = require('./modules/event');
 const amqp = require('./modules/amqp');
-const amqpHost = 'amqp://localhost';
+const amqpHost = 'amqp://172.17.0.1';
 const amqpQueue = 'ShoppingCartQueue';
 const amqpExchange = 'DomainEvents';
 
