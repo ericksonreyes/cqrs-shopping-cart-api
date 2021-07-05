@@ -25,8 +25,8 @@ The projection will be saved in the tmp folder too. You will see it in the order
 * Run ```docker-compose run npm install```
 
 ## Starting the application
-* Run ```docker-compose run npm -T cqrs-node``` to start the REST API server.
-* Run ```docker-compose run npm run listener``` to start the event listener.
+* Run ```docker-compose up -d server``` to start the PHP-FPM, RabbitMQ and NGINX servers as daemon.
+* Run ```docker-compose run --rm npm run listener``` to start the event listener.
 
 ## How to use
 You can use the content of the [OpenAPI specification](./swagger.yml) of the REST API in the following:

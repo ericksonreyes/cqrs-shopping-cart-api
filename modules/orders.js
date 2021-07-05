@@ -1,5 +1,5 @@
 const fs = require('fs');
-const tmpDirectory = require('temp-dir');
+const tmpDirectory = 'tmp';
 const ordersDirectory = tmpDirectory + '/shopping-cart/orders';
 
 
