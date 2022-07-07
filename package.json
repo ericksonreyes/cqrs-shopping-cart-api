@@ -25,7 +25,7 @@
     "express-jwt": "^6.0.0",
     "fs": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
-    "moment": "^2.27.0",
+    "moment": "^2.29.4",
     "path-to-regexp": "^3.2.0",
     "temp-dir": "^2.0.0",
     "uuid": "^3.4.0"
